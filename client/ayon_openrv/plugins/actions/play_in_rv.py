@@ -2,7 +2,7 @@ import json
 from ayon_core.lib import ApplicationManager
 from ayon_core.pipeline import load
 
-from ayon_openrv.api.networking import RVConnector
+from ayon_openrv.networking import RVConnector
 
 
 class PlayInRV(load.LoaderPlugin):
