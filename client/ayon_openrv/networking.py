@@ -27,7 +27,9 @@ class RVConnector:
         self.is_connected = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        self.connect()
+        #! i think i need a constant connection to RV's socket
+        # TODO: try to refactor into singleton
+        # self.connect()
 
     def __enter__(self):
         """Enters the context manager."""
