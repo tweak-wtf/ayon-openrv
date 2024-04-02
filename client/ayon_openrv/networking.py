@@ -6,7 +6,6 @@ from ayon_api import get_addon_settings
 
 from ayon_openrv.version import __version__
 from ayon_openrv.addon import OpenRVAddon
-from ayon_openrv.api.pipeline import load_representations
 
 
 from ayon_core.lib.transcoding import (
@@ -180,6 +179,9 @@ class LoadContainerHandler:
 
     def handle_event(self):
         #! this currently drops support for loading unmanaged containers
+        # delays import to avoid try/catch rv in `api.pipeline`
+        from ayon_openrv.api.pipeline import load_representations
+
         # decode event contents
         event_data: dict = json.loads(self.event.contents())
 
