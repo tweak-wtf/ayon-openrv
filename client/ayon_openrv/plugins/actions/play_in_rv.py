@@ -1,5 +1,6 @@
 import json
 
+import ayon_api
 from ayon_applications import ApplicationManager
 
 from ayon_core.pipeline import load
@@ -31,22 +32,26 @@ class PlayInRV(load.LoaderPlugin):
             app_manager = ApplicationManager()
 
             # get launch context variables
-            task = context["representation"]["data"]["context"].get("task")
-            folder_path = context["folder"].get("path")
-            if not all([folder_path, task]):
-                raise Exception(f"Missing context data: {folder_path = }, {task = }")
+            folder_path = context["folder"]["path"]
+            task_id = context["version"]["taskId"]
+            if not task_id:
+                raise Exception(
+                    f"Missing context data: {folder_path = }, {task_id = }")
+            project_name = context["project"]["name"]
+            task_entity = ayon_api.get_task_by_id(project_name, task_id,
+                                                  fields=["name"])
 
             # launch RV with context
             ctx = {
-                "project_name": context["project"]["name"],
+                "project_name": project_name,
                 "folder_path": folder_path,
-                "task_name": task["name"] or "generic",
+                "task_name": task_entity["name"],
             }
             openrv_app = app_manager.find_latest_available_variant_for_group("openrv")
             openrv_app.launch(**ctx)
 
         _data = [{
-            "objectName": context["representation"]["context"]["representation"],
+            "objectName": context["representation"]["name"],
             "representation": context["representation"]["id"],
         }]
         payload = json.dumps(_data)
